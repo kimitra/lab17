@@ -4,6 +4,7 @@ import Filters from "@/components/Filters";
 import prisma from "@/app/lib/prisma";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 async function fetchTitles() {
   const data = await prisma.profiles.findMany({
@@ -72,7 +73,6 @@ export default async function Home({ searchParams }) {
                         alt={profile.name}
                       />
                     </div>
-
                     <div className={styles.profileCardContent}>
                       <p>{profile.name}</p>
                       <p>{profile.title}</p>

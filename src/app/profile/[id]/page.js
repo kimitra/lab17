@@ -2,6 +2,7 @@ import prisma from "@/app/lib/prisma";
 import Link from "next/link";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export default async function ProfileDetail({ params }) {
   const resolvedParams = await params;
