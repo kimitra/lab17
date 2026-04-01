@@ -1,0 +1,65 @@
+.addProfile {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 24px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.addProfile form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.addProfile label {
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.addProfile input,
+.addProfile textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.addProfile textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.addProfile button {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #6c6cff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.addProfile button:hover {
+  background-color: #5757e6;
+}
+
+.addProfile button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  color: red;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.successMessage {
+  color: green;
+  font-size: 14px;
+  margin-top: 8px;
+}
