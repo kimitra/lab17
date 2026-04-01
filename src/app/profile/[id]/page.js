@@ -4,7 +4,17 @@ import Link from "next/link";
 export const runtime = "nodejs";
 
 export default async function ProfileDetail({ params }) {
-  const id = Number(params.id);
+  const resolvedParams = await params;
+  const id = Number(resolvedParams?.id);
+
+  if (!id || Number.isNaN(id)) {
+    return (
+      <main style={{ padding: "40px 20px" }}>
+        <h1>Invalid profile ID</h1>
+        <Link href="/">Go Back</Link>
+      </main>
+    );
+  }
 
   const profile = await prisma.profiles.findUnique({
     where: { id },
@@ -35,7 +45,7 @@ export default async function ProfileDetail({ params }) {
       >
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
           <img
-            src={profile.image_url}
+            src={profile.image_url || "/vercel.svg"}
             alt={profile.name}
             style={{
               width: "140px",
