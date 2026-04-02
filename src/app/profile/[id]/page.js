@@ -1,66 +1,69 @@
-import prisma from "@/app/lib/prisma";
 import Link from "next/link";
+import prisma from "@/app/lib/prisma";
+import styles from "./page.module.css";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export default async function ProfileDetail({ params }) {
+export default async function ProfileDetailPage({ params }) {
   const resolvedParams = await params;
-  const id = Number(resolvedParams?.id);
-
-  if (!id || Number.isNaN(id)) {
-    return (
-      <main style={{ padding: "40px 20px" }}>
-        <h1>Invalid profile ID</h1>
-        <Link href="/">Go Back</Link>
-      </main>
-    );
-  }
+  const { id } = resolvedParams;
 
   const profile = await prisma.profiles.findUnique({
-    where: { id },
+    where: { id: parseInt(id) },
   });
 
   if (!profile) {
     return (
-      <main style={{ padding: "40px 20px" }}>
-        <h1>Profile not found</h1>
-        <Link href="/">Go Back</Link>
+      <main className={styles.page}>
+        <div className={styles.container}>
+          <p className={styles.notFound}>Profile not found.</p>
+          <Link href="/" className={styles.backLink}>
+            ← Go Back
+          </Link>
+        </div>
       </main>
     );
   }
 
   return (
-    <main style={{ padding: "40px 20px" }}>
-      <Link href="/">← Go Back</Link>
+    <main className={styles.page}>
+      <div className={styles.container}>
+        <Link href="/" className={styles.backLink}>
+          ← Go Back
+        </Link>
 
-      <div
-        style={{
-          maxWidth: "700px",
-          margin: "20px auto",
-          border: "1px solid #ddd",
-          borderRadius: "12px",
-          padding: "24px",
-          background: "#fff",
-        }}
-      >
-        <div style={{ textAlign: "center", marginBottom: "20px" }}>
-          <img
-            src={profile.image_url || "/vercel.svg"}
-            alt={profile.name}
-            style={{
-              width: "140px",
-              height: "140px",
-              objectFit: "cover",
-              borderRadius: "50%",
-            }}
-          />
+        <div className={styles.card}>
+          <div className={styles.imageWrapper}>
+            <img
+              src={profile.image_url || "/vercel.svg"}
+              alt={profile.name}
+              className={styles.image}
+            />
+          </div>
+
+          <h1 className={styles.name}>{profile.name}</h1>
+
+          <div className={styles.info}>
+            <p>
+              <span className={styles.label}>Title:</span> {profile.title}
+            </p>
+            <p>
+              <span className={styles.label}>Email:</span> {profile.email}
+            </p>
+          </div>
+
+          <div className={styles.bioSection}>
+            <h2 className={styles.bioHeading}>Bio</h2>
+            <p className={styles.bio}>{profile.bio}</p>
+          </div>
+
+          <div className={styles.buttonRow}>
+            <Link href={`/profile/${profile.id}/edit`} className={styles.editButton}>
+              Edit Profile
+            </Link>
+          </div>
         </div>
-
-        <h1>{profile.name}</h1>
-        <p><strong>Title:</strong> {profile.title}</p>
-        <p><strong>Email:</strong> {profile.email}</p>
-        <p><strong>Bio:</strong> {profile.bio}</p>
       </div>
     </main>
   );

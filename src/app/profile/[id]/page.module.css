@@ -1,0 +1,115 @@
+.page {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: #f8f9fc;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 20px;
+  text-decoration: none;
+  color: #5757e6;
+  font-weight: 600;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 32px 28px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+}
+
+.imageWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.image {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #eef0ff;
+}
+
+.name {
+  text-align: center;
+  margin: 0 0 18px;
+  font-size: 32px;
+  color: #111827;
+}
+
+.info {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.info p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #374151;
+}
+
+.label {
+  font-weight: 700;
+  color: #111827;
+}
+
+.bioSection {
+  max-width: 700px;
+  margin: 0 auto 24px;
+}
+
+.bioHeading {
+  margin: 0 0 10px;
+  text-align: center;
+  font-size: 22px;
+  color: #111827;
+}
+
+.bio {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #374151;
+  text-align: center;
+  white-space: pre-line;
+}
+
+.buttonRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.editButton {
+  display: inline-block;
+  padding: 12px 18px;
+  background: #6c6cff;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.editButton:hover {
+  background: #5757e6;
+  transform: translateY(-1px);
+}
+
+.notFound {
+  font-size: 18px;
+  margin-bottom: 16px;
+}

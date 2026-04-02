@@ -19,12 +19,22 @@ async function fetchTitles() {
 async function getData({ title, search }) {
   const profiles = await prisma.profiles.findMany({
     where: {
-      ...(title && {
-        title: { contains: title, mode: "insensitive" },
-      }),
-      ...(search && {
-        name: { contains: search, mode: "insensitive" },
-      }),
+      ...(title
+        ? {
+            title: {
+              contains: title,
+              mode: "insensitive",
+            },
+          }
+        : {}),
+      ...(search
+        ? {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          }
+        : {}),
     },
     orderBy: {
       id: "desc",
@@ -35,8 +45,9 @@ async function getData({ title, search }) {
 }
 
 export default async function Home({ searchParams }) {
-  const selectedTitle = searchParams?.title || "";
-  const search = searchParams?.search || "";
+  const resolvedSearchParams = await searchParams;
+  const selectedTitle = resolvedSearchParams?.title || "";
+  const search = resolvedSearchParams?.search || "";
 
   const [titles, profiles] = await Promise.all([
     fetchTitles(),
@@ -73,6 +84,7 @@ export default async function Home({ searchParams }) {
                         alt={profile.name}
                       />
                     </div>
+
                     <div className={styles.profileCardContent}>
                       <p>{profile.name}</p>
                       <p>{profile.title}</p>
