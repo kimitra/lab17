@@ -81,8 +81,6 @@ export default function AddProfileForm({ existingProfile = {} }) {
 
     const method = isEditMode ? "PUT" : "POST";
 
-    console.log("Submitting to:", endpoint, method);
-
     const response = await fetch(endpoint, {
       method,
       body: formData,
