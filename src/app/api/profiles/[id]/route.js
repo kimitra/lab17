@@ -66,8 +66,9 @@ export async function PUT(request, { params }) {
       }
 
       const blob = await put(imgFile.name, imgFile, {
-        access: 'public',
-      });
+      access: "public",
+      addRandomSuffix: true,
+    });
 
       imageUrl = blob.url;
     }

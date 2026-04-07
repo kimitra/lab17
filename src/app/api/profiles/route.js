@@ -40,7 +40,8 @@ export async function POST(request) {
 
       const blob = await put(imgFile.name, imgFile, {
         access: "public",
-      });
+        addRandomSuffix: true,
+    });
 
       imageUrl = blob.url;
     }
