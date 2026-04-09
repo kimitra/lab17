@@ -1,13 +1,13 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import styles from "./AuthForm.module.css"; //add your stylesheet
+import { useSearchParams } from "next/navigation";
+import styles from "./AuthForm.module.css";
 
 const stripTags = (s) => String(s ?? "").replace(/<\/?[^>]+>/g, "");
 
-const AuthForm = () => {
-  const router = useRouter();
+export default function AuthForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [isLogin, setIsLogin] = useState(true);
@@ -27,10 +27,12 @@ const AuthForm = () => {
     setErrors("");
     setData({ email: "", password: "" });
   };
+
   const handleChange = (e) => {
     const { id, value } = e.target;
     setData((prev) => ({ ...prev, [id]: value }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors("");
@@ -38,43 +40,37 @@ const AuthForm = () => {
 
     const email = stripTags(data.email);
     const password = stripTags(data.password);
+
     try {
       if (isLogin) {
-        const result = await signIn("credentials", {
+        await signIn("credentials", {
           redirect: true,
           callbackUrl,
           email,
           password,
         });
-        if (result?.error) {
-          setErrors(result.error);
-        }
       } else {
-        // Registration logic can be added here
         const res = await fetch("/api/auth/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
         });
-        const data = await res.json();
-        if (data.error) {
-          setErrors(data.error);
-        } else {
-          // Automatically log in the user after successful registration
-          const result = await signIn("credentials", {
-            redirect: true,
-            callbackUrl,
-            email,
-            password,
-          });
-          if (result?.error) {
-            setErrors(result.error);
-          }
+
+        const result = await res.json();
+
+        if (!res.ok) {
+          throw new Error(result.error || "Failed to register");
         }
+
+        await signIn("credentials", {
+          redirect: true,
+          callbackUrl,
+          email,
+          password,
+        });
       }
     } catch (error) {
-      setErrors("An unexpected error occurred. Please try again.");
-      return;
+      setErrors(error.message || "An unexpected error occurred.");
     } finally {
       setIsSubmitting(false);
     }
@@ -82,8 +78,12 @@ const AuthForm = () => {
 
   return (
     <>
-      <h1>{isLogin ? "Sign In" : "Register"}</h1>
+      <h1 style={{ textAlign: "center" }}>
+        {isLogin ? "Sign In" : "Register"}
+      </h1>
+
       {statusMessage && <p className={styles.statusMessage}>{statusMessage}</p>}
+
       <form onSubmit={handleSubmit} className={styles.authForm}>
         <div>
           <label htmlFor="email">Email</label>
@@ -95,6 +95,7 @@ const AuthForm = () => {
             required
           />
         </div>
+
         <div>
           <label htmlFor="password">Password</label>
           <input
@@ -105,11 +106,39 @@ const AuthForm = () => {
             required
           />
         </div>
+
         {errors && <p className={styles.error}>{errors}</p>}
-        <button type="submit" disabled={isSubmitting || !data.email || !data.password}>
-          {isSubmitting ? "Signing in..." : isLogin ? "Sign In" : "Register"}
+
+        <button
+          type="submit"
+          disabled={isSubmitting || !data.email || !data.password}
+        >
+          {isSubmitting ? "Submitting..." : isLogin ? "Sign In" : "Register"}
         </button>
       </form>
+
+      <div className={styles.oauthDivider}>
+        <span>or continue with</span>
+      </div>
+
+      <div className={styles.oauthButtons}>
+        <button
+          type="button"
+          className={styles.oauthButton}
+          onClick={() => signIn("github", { callbackUrl })}
+        >
+          Sign in with GitHub
+        </button>
+
+        <button
+          type="button"
+          className={styles.oauthButton}
+          onClick={() => signIn("google", { callbackUrl })}
+        >
+          Sign in with Google
+        </button>
+      </div>
+
       <div className={styles.toggle}>
         <p>{isLogin ? "Don't have an account?" : "Already have an account?"}</p>
         <button type="button" onClick={handleToggle}>
@@ -118,5 +147,4 @@ const AuthForm = () => {
       </div>
     </>
   );
-};
-export default AuthForm;
+}

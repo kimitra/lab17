@@ -116,3 +116,36 @@
 .toggle button:active {
   transform: translateY(1px);
 }
+
+.oauthDivider {
+  margin: 18px auto 12px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.oauthButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.oauthButton {
+  padding: 10px 16px;
+  background: #f7f7f7;
+  color: #222;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.oauthButton:hover {
+  background: #ececec;
+  transform: translateY(-1px);
+}
