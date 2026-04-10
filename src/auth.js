@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import bcrypt from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
-import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import prisma from "@/app/lib/prisma";
 
@@ -15,20 +14,26 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
     async authorize(credentials) {
       try {
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
 
-        if (!user || !user.password) return null;
+        if (!user || !user.password) {
+          return null;
+        }
 
         const isValid = await bcrypt.compare(
           credentials.password,
           user.password
         );
 
-        if (!isValid) return null;
+        if (!isValid) {
+          return null;
+        }
 
         return {
           id: user.id,
@@ -41,7 +46,29 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       }
     },
   }),
-  GitHub({}),
+
+  {
+    id: "github",
+    name: "GitHub",
+    type: "oauth",
+    authorization: {
+      url: "https://github.com/login/oauth/authorize",
+      params: { scope: "read:user user:email" },
+    },
+    token: "https://github.com/login/oauth/access_token",
+    userinfo: "https://api.github.com/user",
+    clientId: process.env.AUTH_GITHUB_ID,
+    clientSecret: process.env.AUTH_GITHUB_SECRET,
+    profile(profile) {
+      return {
+        id: String(profile.id),
+        name: profile.name ?? profile.login,
+        email: profile.email,
+        image: profile.avatar_url,
+      };
+    },
+  },
+
   Google({}),
 ],
 
@@ -74,7 +101,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
     async signIn({ user, account }) {
       if (account?.provider === "google" || account?.provider === "github") {
-        if (!user?.email) return false;
+  if (!user?.email) {
+    console.error(`${account.provider} user has no email`);
+    return false;
+  }
 
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email },
