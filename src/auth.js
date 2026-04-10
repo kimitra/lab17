@@ -48,8 +48,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       },
     }),
 
-    GitHub,
-    Google,
+    GitHub({}),
+    Google({}),
   ],
 
   session: {
