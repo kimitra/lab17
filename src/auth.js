@@ -7,50 +7,43 @@ import prisma from "@/app/lib/prisma";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
-    Credentials({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        try {
-          if (!credentials?.email || !credentials?.password) {
-            return null;
-          }
+  Credentials({
+    name: "Credentials",
+    credentials: {
+      email: { label: "Email", type: "email" },
+      password: { label: "Password", type: "password" },
+    },
+    async authorize(credentials) {
+      try {
+        if (!credentials?.email || !credentials?.password) return null;
 
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
-          });
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
 
-          if (!user || !user.password) {
-            return null;
-          }
+        if (!user || !user.password) return null;
 
-          const isValid = await bcrypt.compare(
-            credentials.password,
-            user.password
-          );
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
 
-          if (!isValid) {
-            return null;
-          }
+        if (!isValid) return null;
 
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.email,
-          };
-        } catch (error) {
-          console.error("Authorization error:", error);
-          return null;
-        }
-      },
-    }),
-
-    GitHub({}),
-    Google({}),
-  ],
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.email,
+        };
+      } catch (error) {
+        console.error("Authorization error:", error);
+        return null;
+      }
+    },
+  }),
+  GitHub({}),
+  Google({}),
+],
 
   session: {
     strategy: "jwt",
