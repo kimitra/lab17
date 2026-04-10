@@ -1,9 +1,9 @@
 import NextAuth from "next-auth";
 import bcrypt from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
-import prisma from "@/app/lib/prisma";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import prisma from "@/app/lib/prisma";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
@@ -48,15 +48,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       },
     }),
 
-    GitHub({
-      clientId: process.env.AUTH_GITHUB_ID,
-      clientSecret: process.env.AUTH_GITHUB_SECRET,
-    }),
-
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
-    }),
+    GitHub,
+    Google,
   ],
 
   session: {
@@ -86,30 +79,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       return true;
     },
 
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id;
-        session.user.email = token.email;
-        if (token.name) session.user.name = token.name;
-      }
-      return session;
-    },
-
-    async jwt({ token, user, account, profile }) {
-      if (user) {
-        token.id = user.id || token.id;
-        token.email = user.email || token.email;
-        token.name = user.name || token.name;
-      }
-
-      if (account?.provider === "google" || account?.provider === "github") {
-        token.email = user?.email || token.email;
-        token.name = user?.name || token.name;
-      }
-
-      return token;
-    },
-
     async signIn({ user, account }) {
       if (account?.provider === "google" || account?.provider === "github") {
         if (!user?.email) return false;
@@ -129,6 +98,24 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       }
 
       return true;
+    },
+
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id || token.id;
+        token.email = user.email || token.email;
+        token.name = user.name || token.name;
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id;
+        session.user.email = token.email;
+        session.user.name = token.name;
+      }
+      return session;
     },
   },
 });
