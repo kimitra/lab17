@@ -48,26 +48,26 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   }),
 
   {
-    id: "github",
-    name: "GitHub",
-    type: "oauth",
-    authorization: {
-      url: "https://github.com/login/oauth/authorize",
-      params: { scope: "read:user user:email" },
-    },
-    token: "https://github.com/login/oauth/access_token",
-    userinfo: "https://api.github.com/user",
-    clientId: process.env.AUTH_GITHUB_ID,
-    clientSecret: process.env.AUTH_GITHUB_SECRET,
-    profile(profile) {
-      return {
-        id: String(profile.id),
-        name: profile.name ?? profile.login,
-        email: profile.email,
-        image: profile.avatar_url,
-      };
-    },
+  id: "github",
+  name: "GitHub",
+  type: "oauth",
+  authorization: {
+    url: "https://github.com/login/oauth/authorize",
+    params: { scope: "read:user user:email" },
   },
+  token: "https://github.com/login/oauth/access_token",
+  userinfo: "https://api.github.com/user",
+  clientId: process.env.AUTH_GITHUB_ID,
+  clientSecret: process.env.AUTH_GITHUB_SECRET,
+  profile(profile) {
+    return {
+      id: String(profile.id),
+      name: profile.name ?? profile.login,
+      email: profile.email,
+      image: profile.avatar_url,
+    };
+  },
+},
 
   Google({}),
 ],
